@@ -1,46 +1,119 @@
-////
-This is the base template for Hazelcast integration module guides.
+:github-address: https://github.com/hazelcast-guides/kubernetes
+:templates-url: templates:ROOT:page$/
+:hazelcast: Hazelcast IMDG
+:framework: Kubernetes
 
-You can clone this repository, work on it and create your guide, and then push to a new repository.
-////
+= Hazelcast for Kubernetes
 
-:github-address: [github-repo-address-of-your-guide]
-
-:templates-url: https://raw.githubusercontent.com/hazelcast-guides/adoc-templates/master
-
-// Use this relative url if you are going to publish the guide on the guides site.
-// Note that this url will not work locally and raise asciidoctor errors.
-// So, complete the guide with the above url and set the below one just before 
-// publishing on the guides site.
-//
-// :templates-url: templates:ROOT:page$/
-
-= Title
-
-// Content entered directly below the header but before the first section heading is called the preamble.
+This sample is a guideline on how to start Hazelcast cluster on the Kubernetes environment.
 
 include::{templates-url}/link-to-repo.adoc[]
 
 == What You’ll Learn
 
-// Define the problem and tell reader what he/she will learn from this guide.
+In this guide you will deploy Hazelcast cluster to Kubernetes.
 
 == Prerequisites
 
-// Define the prerequisites for the guide.
+1. Up and running https://kubernetes.io/[Kubernetes] version 1.9 or higher.
+* For development and testing, you may use https://github.com/kubernetes/minikube[Minikube]
+* You must have the Kubernetes command line tool, https://kubernetes.io/docs/tasks/tools/install-kubectl/[kubectl], installed
+2. Another important note would be that this document assumes some familiarity with `kubectl`, Kubernetes, and Docker.
 
-////
-Write the steps in your guide here by making each step a different section
-////
+== Deployment Steps
+
+=== Creating Role Binding
+Hazelcast uses Kubernetes API to discover nodes and that is why you need to grant certain permissions. The simplest Role Binding file can look as `rbac.yaml`. Note that you can make it more specific, since Hazelcast actually uses only certain API endpoints. Note also that if you use "DNS Lookup Discovery" instead of "REST API Discovery", then you can skip the Role Binding step at all. Read more at https://github.com/hazelcast/hazelcast-kubernetes[Hazelcast Kubernetes API Plugin].
+
+[source, shell]
+----
+$ kubectl apply -f rbac.yaml
+----
+
+=== Creating Config Map
+Hazelcast configuration can be stored in the Config Map. You can install it with the following command:
+
+[source, shell]
+----
+$ kubectl apply -f config.yaml
+----
+
+=== Creating Secret with Enterprise Key (Enterprise Only)
+Hazelcast Enterprise requires the Hazelcast Enterprise License Key. You can store it as Kubernetes Secret.
+
+[NOTE]
+====
+This step is not required for Hazelcast Open Source.
+====
+
+[source, shell]
+----
+$ kubectl create secret generic hz-enterprise-license --from-literal=key=<LICENSE-KEY>
+----
+
+=== Starting Hazelcast Cluster
+
+Finally, deploy the Hazelcast cluster:
+
+[source, shell]
+----
+$ kubectl apply -f hazelcast.yaml
+----
+
+For Hazelcast Enterprise, use the following command:
+
+[source, shell]
+----
+$ kubectl apply -f hazelcast-enterprise.yaml
+----
+
+=== Persistent Volume
+
+This is a *prerequisite* step if you have JARs.
+
+In order to share a custom domain JARs (for example `EntryProcessor` implementations) among Hazelcast pods, you need to add a persistent volume in Kubernetes.
+
+There are many ways you can define and map volumes in Kubernetes. Types of volumes are discussed in the https://kubernetes.io/docs/concepts/storage/volumes/[official documentation].
+
+Once you have created a volume, copy your custom Hazelcast JARs into the root volume directory and add it into the `CLASSPATH` environment variable.
+
+In the following example a GCE Persistent Disk named "my-hz-disk" has been already created and populated with the custom configuration.
+
+Open a text editor and add the following deployment YAML for persistent volume:
+
+[source, yaml]
+----
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: hz-pv
+spec:
+  capacity:
+    storage: 10Gi
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+    - ReadOnlyMany
+  persistentVolumeReclaimPolicy: Retain
+  gcePersistentDisk:
+    pdName: my-hz-disk
+    fsType: ext4
+----
+
+Save this file as `hz-pv.yaml`. Please also notice that `Reclaim Policy` is set as `Retain`. Therefore, contents of this folder will remain as is, between successive `claims`.
+
+Create the persistent volume:
+
+[source, shell]
+----
+$ kubectl apply -f hz-pv.yaml
+----
+
+Please note that contents of your previous deployment is preserved. If you change the claim policy to `RECYCLE`, you have to transfer all custom files to `<your-pv-path>` before each successive deployments.
+
+Now edit `hazelcast.yaml`, and a PersistentVolumeClaim definition to match the above PersistentVolume. Finally, set the `CLASSPATH` env variable to a valid path and add a corresponding `volumeMount` in the `StatefulSet`.
+
 
 == Summary
 
-// Provide a quick summary
-
-== See Also
-
-// Add some links to resources, such as other related guides.
-// Use relative links used on the home page (see https://raw.githubusercontent.com/hazelcast-guides/guides-site/master/home/modules/ROOT/pages/index.adoc)
-
-- xref:hazelcast-embedded-springboot:ROOT:index.adoc[Hazelcast in SpringBoot]
-- xref:hazelcast-quarkus:ROOT:index.adoc[Hazelcast Client for Quarkus] 
+This guide shows the basic setup for Hazelcast cluster for Kubernetes. For more advanced configurations check other guides.
