@@ -24,7 +24,7 @@ jobs:
 
       - name: Test for successful Deployment
         run: |-
-          kubectl wait --for=condition=ready pod/hazelcast-0 --timeout=120s
+          kubectl wait --for=condition=ready pod/hazelcast-0 --timeout=150s
           kubectl wait --for=condition=ready pod/hazelcast-1 --timeout=120s
           kubectl wait --for=condition=ready pod/hazelcast-2 --timeout=120s
 
