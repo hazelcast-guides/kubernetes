@@ -28,3 +28,11 @@ jobs:
           kubectl wait --for=condition=ready pod/hazelcast-1 --timeout=120s
           kubectl wait --for=condition=ready pod/hazelcast-2 --timeout=120s
 
+      - name: Log status on failure
+        if: ${{ failure() }}
+        run: |-
+          kubectl describe pod/hazelcast-0
+          kubectl describe pod/hazelcast-1
+          kubectl describe pod/hazelcast-2
+          exit 1
+
