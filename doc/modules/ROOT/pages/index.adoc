@@ -111,7 +111,12 @@ $ kubectl apply -f hz-pv.yaml
 
 Please note that contents of your previous deployment is preserved. If you change the claim policy to `RECYCLE`, you have to transfer all custom files to `<your-pv-path>` before each successive deployments.
 
-Now edit `hazelcast.yaml`, and a PersistentVolumeClaim definition to match the above PersistentVolume. Finally, set the `CLASSPATH` env variable to a valid path and add a corresponding `volumeMount` in the `StatefulSet`.
+Now edit `hazelcast.yaml`, and a PersistentVolumeClaim definition to match the above PersistentVolume. Finally, set the `CLASSPATH` env variable to a valid path and add a corresponding `volumeMount` in the `StatefulSet`. Now you apply the changes by running:
+
+[source, shell]
+----
+$ kubectl apply -f hazelcast.yaml
+----
 
 
 == Summary

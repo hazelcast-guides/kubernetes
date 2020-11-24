@@ -9,8 +9,3 @@ data:
         join:
           kubernetes:
             enabled: true
-        rest-api:
-          enabled: true
-          endpoint-groups:
-            HEALTH_CHECK:
-              enabled: true
