@@ -23,7 +23,7 @@ In this guide you will deploy Hazelcast cluster to Kubernetes.
 == Deployment Steps
 
 === Creating Role Binding
-Hazelcast uses Kubernetes API to discover nodes and that is why you need to grant certain permissions. The simplest Role Binding file can look as `rbac.yaml`. Note that you can make it more specific, since Hazelcast actually uses only certain API endpoints. Note also that if you use "DNS Lookup Discovery" instead of "REST API Discovery", then you can skip the Role Binding step at all. Read more at https://github.com/hazelcast/hazelcast-kubernetes[Hazelcast Kubernetes API Plugin].
+Hazelcast uses Kubernetes API to discover nodes and that is why you need to grant certain permissions. The simplest Role Binding file looks like `rbac.yaml`. Note that you can make it more specific, since Hazelcast actually uses only certain API endpoints. Note also that if you use "DNS Lookup Discovery" instead of "REST API Discovery", then you can skip the Role Binding step at all. Read more at https://github.com/hazelcast/hazelcast-kubernetes[Hazelcast Kubernetes API Plugin].
 
 [source, shell]
 ----
@@ -116,4 +116,9 @@ Now edit `hazelcast.yaml`, and a PersistentVolumeClaim definition to match the a
 
 == Summary
 
-This guide shows the basic setup for Hazelcast cluster for Kubernetes. For more advanced configurations check other guides.
+This guide shows the basic setup for Hazelcast cluster for Kubernetes. You can find more advanced configurations in other Kubernetes guides.
+
+== See Also
+- xref:kubernetes-hpa:ROOT:index.adoc[Kubernetes HPA for Hazelcast cluster]
+- xref:kubernetes-external-client:ROOT:index.adoc[External Hazelcast Client on Kubernetes]
+- xref:kubernetes-sidecar:ROOT:index.adoc[Hazelcast as Sidecar container]
