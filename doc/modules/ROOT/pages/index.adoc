@@ -5,123 +5,259 @@
 
 = Hazelcast for Kubernetes
 
-This sample is a guideline on how to start Hazelcast cluster on the Kubernetes environment.
+This sample is a guideline on how to start and use Hazelcast cluster in Kubernetes.
 
 include::{templates-url}/link-to-repo.adoc[]
 
 == What You’ll Learn
 
-In this guide you will deploy Hazelcast cluster to Kubernetes.
+In this guide you will deploy Hazelcast cluster to Kubernetes and use it with Hazelcast client.
 
 == Prerequisites
 
-1. Up and running https://kubernetes.io/[Kubernetes] version 1.9 or higher.
-* For development and testing, you may use https://github.com/kubernetes/minikube[Minikube]
-* You must have the Kubernetes command line tool, https://kubernetes.io/docs/tasks/tools/install-kubectl/[kubectl], installed
-2. Another important note would be that this document assumes some familiarity with `kubectl`, Kubernetes, and Docker.
+* Up and running https://kubernetes.io/[Kubernetes] cluster (version 1.9 or higher)
+* Kubernetes command line tool, https://kubernetes.io/docs/tasks/tools/install-kubectl/[kubectl]
+* (Recommended) https://helm.sh/docs/intro/install/[Helm CLI]
 
-== Deployment Steps
+== Deploy Hazelcast cluster
 
-=== Creating Role Binding
-Hazelcast uses Kubernetes API to discover nodes and that is why you need to grant certain permissions. The simplest Role Binding file looks like `rbac.yaml`. Note that you can make it more specific, since Hazelcast actually uses only certain API endpoints. Note also that if you use "DNS Lookup Discovery" instead of "REST API Discovery", then you can skip the Role Binding step at all. Read more at https://github.com/hazelcast/hazelcast-kubernetes[Hazelcast Kubernetes API Plugin].
+There are different ways of deploying Hazelcast to Kubernetes. For the production environment we recommend Helm or Hazelcast Operator, because these methods provide the complete Hazelcast experience:
 
-[source, shell]
+* Install Hazelcast Management Center at the same time
+* Configure `livenessProbe` and `readinessProbe`
+* Simple updates of Hazelcast configuration
+* Enable rolling upgrades without data loss
+* Automatic RBAC configuration
+* Other useful features
+
+[tabs]
+====
+
+Helm::
++
+--
+[source, bash]
 ----
-$ kubectl apply -f rbac.yaml
+helm repo add hazelcast https://hazelcast-charts.s3.amazonaws.com/
+helm repo update
+helm install hz-hazelcast hazelcast/hazelcast
+----
+--
+
+Hazelcast Operator::
++
+
+--
+[source, bash]
+----
+kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator-rbac.yaml
+kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast-rbac.yaml
+kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcastcluster.crd.yaml
+kubectl --validate=false apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator.yaml
+kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast.yaml
+----
+--
+
+Kubectl::
++
+
+--
+[source, bash]
+----
+kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-kubernetes/master/rbac.yaml
+
+kubectl run hz-hazelcast-0 --image=hazelcast/hazelcast:$HAZELCAST_VERSION -l "role=hazelcast"
+kubectl run hz-hazelcast-1 --image=hazelcast/hazelcast:$HAZELCAST_VERSION -l "role=hazelcast"
+kubectl run hz-hazelcast-2 --image=hazelcast/hazelcast:$HAZELCAST_VERSION -l "role=hazelcast"
+
+kubectl create service clusterip hz-hazelcast --tcp=5701 -o yaml --dry-run=client | kubectl set selector --local -f - "role=hazelcast" -o yaml | kubectl create -f -
+----
+--
+
+====
+
+You can check that the Hazelcast cluster is up and running.
+
+[source, bash]
+----
+kubectl logs hz-hazelcast-0
+...
+Members {size:3, ver:3} [
+        Member [10.216.6.7]:5701 - 6d2100e0-8dcf-4e7c-ab40-8e98e23475e3 this
+        Member [10.216.5.6]:5701 - 5ab4d554-fd7d-4929-8475-0ddf79a21076
+        Member [10.216.8.6]:5701 - 7f7dd5f4-e732-4575-89d6-a6e823da38da
+]
 ----
 
-=== Creating Config Map
-Hazelcast configuration can be stored in the Config Map. You can install it with the following command:
+== Configure Hazelcast client
 
-[source, shell]
-----
-$ kubectl apply -f config.yaml
-----
+First, you need to configure install Hazelcast client dependency.
 
-=== Creating Secret with Enterprise Key (Enterprise Only)
-Hazelcast Enterprise requires the Hazelcast Enterprise License Key. You can store it as Kubernetes Secret.
+[tabs]
+====
+
+Java::
++
+--
+.pom.xml
+[source, xml]
+----
+<dependency>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast</artifactId>
+    <version>${hazelcast.version}</version>
+</dependency>
+----
+--
+
+NodeJS::
++
+--
+[source, bash]
+----
+npm install hazelcast-client
+----
+--
+
+====
+
+Then, you can use Hazelcast client in your application code by configuring Hazelcast Kubernetes service `hz-hazelcast` as the server address.
+
+[tabs]
+====
+
+Java::
++
+--
+[source, java]
+----
+ClientConfig config = new ClientConfig();
+config.getConnectionStrategyConfig().getConnectionRetryConfig().setClusterConnectTimeoutMillis(Long.MAX_VALUE);
+config.getNetworkConfig().addAddress("hz-hazelcast");
+----
+--
+
+NodeJS::
++
+--
+[source, nodejs]
+----
+var clientConfig = {
+    network: {
+        clusterMembers: [
+            'hz-hazelcast'
+        ]
+    }
+}
+const client = await Client.newHazelcastClient(clientConfig);
+----
+--
+
+====
+
+== Deploy Hazelcast client application
+
+[tabs]
+====
+
+Java::
++
+--
+[source, bash]
+----
+mvn package -f java/pom.xml
+docker build -t hazelcastguides/hazelcast-client java
+----
+--
+
+NodeJS::
++
+--
+[source, nodejs]
+----
+docker build -t hazelcastguides/hazelcast-client nodejs
+----
+--
+
+====
 
 [NOTE]
 ====
-This step is not required for Hazelcast Open Source.
+If you use a remote Kubernetes cluster and you want to build your own image, then make sure that you push the Docker image into the Docker registry.
 ====
 
-[source, shell]
 ----
-$ kubectl create secret generic hz-enterprise-license --from-literal=key=<LICENSE-KEY>
-----
-
-=== Starting Hazelcast Cluster
-
-Finally, deploy the Hazelcast cluster:
-
-[source, shell]
-----
-$ kubectl apply -f hazelcast.yaml
+kubectl run hazelcast-client --image=hazelcastguides/hazelcast-client
 ----
 
-For Hazelcast Enterprise, use the following command:
-
-[source, shell]
 ----
-$ kubectl apply -f hazelcast-enterprise.yaml
-----
-
-=== Persistent Volume
-
-This is a *prerequisite* step if you have JARs.
-
-In order to share a custom domain JARs (for example `EntryProcessor` implementations) among Hazelcast pods, you need to add a persistent volume in Kubernetes.
-
-There are many ways you can define and map volumes in Kubernetes. Types of volumes are discussed in the https://kubernetes.io/docs/concepts/storage/volumes/[official documentation].
-
-Once you have created a volume, copy your custom Hazelcast JARs into the root volume directory and add it into the `CLASSPATH` environment variable.
-
-In the following example a GCE Persistent Disk named "my-hz-disk" has been already created and populated with the custom configuration.
-
-Open a text editor and add the following deployment YAML for persistent volume:
-
-[source, yaml]
-----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: hz-pv
-spec:
-  capacity:
-    storage: 10Gi
-  storageClassName: standard
-  accessModes:
-    - ReadWriteOnce
-    - ReadOnlyMany
-  persistentVolumeReclaimPolicy: Retain
-  gcePersistentDisk:
-    pdName: my-hz-disk
-    fsType: ext4
+kubectl logs hazelcast-client
+...
+Members {size:3, ver:3} [
+        Member [10.216.6.7]:5701 - 6d2100e0-8dcf-4e7c-ab40-8e98e23475e3 this
+        Member [10.216.5.6]:5701 - 5ab4d554-fd7d-4929-8475-0ddf79a21076
+        Member [10.216.8.6]:5701 - 7f7dd5f4-e732-4575-89d6-a6e823da38da
+]
+...
+Connection Successful!
+Now the map named 'map' will be filled with random entries.
+Current map size: 71754
+Current map size: 71758
+Current map size: 71782
+Current map size: 71792
+...
 ----
 
-Save this file as `hz-pv.yaml`. Please also notice that `Reclaim Policy` is set as `Retain`. Therefore, contents of this folder will remain as is, between successive `claims`.
+Execute the following command to remove the client.
 
-Create the persistent volume:
-
-[source, shell]
 ----
-$ kubectl apply -f hz-pv.yaml
+kubectl delete pod hazelcast-client
 ----
 
-Please note that contents of your previous deployment is preserved. If you change the claim policy to `RECYCLE`, you have to transfer all custom files to `<your-pv-path>` before each successive deployments.
+== Clean up
 
-Now edit `hazelcast.yaml`, and a PersistentVolumeClaim definition to match the above PersistentVolume. Finally, set the `CLASSPATH` env variable to a valid path and add a corresponding `volumeMount` in the `StatefulSet`. Now you apply the changes by running:
+[tabs]
+====
 
-[source, shell]
+Helm::
++
+--
+[source, bash]
 ----
-$ kubectl apply -f hazelcast.yaml
+helm uninstall hazelcast
 ----
+--
 
+Hazelcast Operator::
++
+
+--
+[source, bash]
+----
+kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast.yaml
+kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator.yaml
+kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcastcluster.crd.yaml
+kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast-rbac.yaml
+kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator-rbac.yaml
+----
+--
+
+Kubectl::
++
+
+--
+[source, bash]
+----
+kubectl delete service hz-hazelcast
+kubectl delete pod hz-hazelcast-0 hz-hazelcast-1 hz-hazelcast-2
+kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-kubernetes/master/rbac.yaml
+----
+--
+====
 
 == Summary
 
-This guide shows the basic setup for Hazelcast cluster for Kubernetes. You can find more advanced configurations in other Kubernetes guides.
+This guide shows the basic setup for Hazelcast cluster for Kubernetes and use it with different clients.
 
 == See Also
 - xref:kubernetes-hpa:ROOT:index.adoc[Kubernetes HPA for Hazelcast cluster]
