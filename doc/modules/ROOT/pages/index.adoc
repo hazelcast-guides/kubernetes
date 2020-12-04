@@ -26,6 +26,7 @@ There are different ways of deploying Hazelcast to Kubernetes. For the productio
 * Install Hazelcast Management Center at the same time
 * Configure `livenessProbe` and `readinessProbe`
 * Simple updates of Hazelcast configuration
+* Scale up/down Hazelcast cluster
 * Enable rolling upgrades without data loss
 * Automatic RBAC configuration
 * Other useful features
@@ -89,9 +90,11 @@ Members {size:3, ver:3} [
 ]
 ----
 
+At this point you have a running Hazelcast cluster with 3 members which is exposed with a service called `hz-hazelcast`.
+
 == Configure Hazelcast client
 
-First, you need to configure install Hazelcast client dependency.
+To use Hazelcast client, first you need to configure/install Hazelcast client dependency.
 
 [tabs]
 ====
@@ -121,7 +124,7 @@ npm install hazelcast-client
 
 ====
 
-Then, you can use Hazelcast client in your application code by configuring Hazelcast Kubernetes service `hz-hazelcast` as the server address.
+Then, you can configure Hazelcast client in your application code to use your Hazelcast server DNS `hz-hazelcast`.
 
 [tabs]
 ====
@@ -132,8 +135,10 @@ Java::
 [source, java]
 ----
 ClientConfig config = new ClientConfig();
-config.getConnectionStrategyConfig().getConnectionRetryConfig().setClusterConnectTimeoutMillis(Long.MAX_VALUE);
 config.getNetworkConfig().addAddress("hz-hazelcast");
+
+// Configure also the connection retry timout
+config.getConnectionStrategyConfig().getConnectionRetryConfig().setClusterConnectTimeoutMillis(Long.MAX_VALUE);
 ----
 --
 
@@ -155,7 +160,11 @@ const client = await Client.newHazelcastClient(clientConfig);
 
 ====
 
+With the configuration above, if you deploy your application to Kubernetes cluster, it should automatically connect into Hazelcast cluster.
+
 == Deploy Hazelcast client application
+
+To deploy your application to Kubernetes cluster, you need first to dockerize it.
 
 [tabs]
 ====
@@ -183,13 +192,17 @@ docker build -t hazelcastguides/hazelcast-client nodejs
 
 [NOTE]
 ====
-If you use a remote Kubernetes cluster and you want to build your own image, then make sure that you push the Docker image into the Docker registry.
+If you use a remote Kubernetes cluster and you want to build your own Docker image then make sure that you also push the Docker image into the Docker registry.
 ====
 
+[source, bash]
 ----
 kubectl run hazelcast-client --image=hazelcastguides/hazelcast-client
 ----
 
+After a moment, your application should run in Kubernetes. You can check its logs.
+
+[source, bash]
 ----
 kubectl logs hazelcast-client
 ...
@@ -208,13 +221,16 @@ Current map size: 71792
 ...
 ----
 
-Execute the following command to remove the client.
+To remove the client application, execute the following command.
 
+[source, bash]
 ----
 kubectl delete pod hazelcast-client
 ----
 
-== Clean up
+== Tear down Hazelcast cluster
+
+To delete Hazelcast cluster, run the following commands.
 
 [tabs]
 ====
@@ -254,10 +270,6 @@ kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-kubernet
 ----
 --
 ====
-
-== Summary
-
-This guide shows the basic setup for Hazelcast cluster for Kubernetes and use it with different clients.
 
 == See Also
 - xref:kubernetes-hpa:ROOT:index.adoc[Kubernetes HPA for Hazelcast cluster]
