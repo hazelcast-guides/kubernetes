@@ -17,7 +17,7 @@ In this guide, you will deploy Hazelcast cluster to Kubernetes and connect to it
 
 * Up and running https://kubernetes.io/[Kubernetes] cluster (version 1.9 or higher)
 * Kubernetes command line tool, https://kubernetes.io/docs/tasks/tools/install-kubectl/[kubectl]
-* (recommended) https://helm.sh/docs/intro/install/[Helm CLI]
+* (optional) https://helm.sh/docs/intro/install/[Helm CLI]
 
 == Deploy Hazelcast cluster
 
