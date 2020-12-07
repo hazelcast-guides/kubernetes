@@ -175,7 +175,6 @@ Java::
 --
 [source, bash]
 ----
-mvn package -f java/pom.xml
 docker build -t hazelcastguides/hazelcast-client java
 ----
 --
@@ -183,7 +182,7 @@ docker build -t hazelcastguides/hazelcast-client java
 NodeJS::
 +
 --
-[source, nodejs]
+[source, bash]
 ----
 docker build -t hazelcastguides/hazelcast-client nodejs
 ----
@@ -193,7 +192,7 @@ docker build -t hazelcastguides/hazelcast-client nodejs
 
 [NOTE]
 ====
-If you use a remote Kubernetes cluster and you want to build your own Docker image then make sure that you also push the Docker image into the Docker registry.
+If you use a remote Kubernetes cluster and you want to build your own Docker image then make sure that you also push your Docker image into the Docker registry.
 ====
 
 [source, bash]
