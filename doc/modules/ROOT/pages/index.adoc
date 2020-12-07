@@ -11,25 +11,24 @@ include::{templates-url}/link-to-repo.adoc[]
 
 == What You’ll Learn
 
-In this guide you will deploy Hazelcast cluster to Kubernetes and use it with Hazelcast client.
+In this guide, you will deploy Hazelcast cluster to Kubernetes and connect to it using Hazelcast client.
 
 == Prerequisites
 
 * Up and running https://kubernetes.io/[Kubernetes] cluster (version 1.9 or higher)
 * Kubernetes command line tool, https://kubernetes.io/docs/tasks/tools/install-kubectl/[kubectl]
-* (Recommended) https://helm.sh/docs/intro/install/[Helm CLI]
+* (recommended) https://helm.sh/docs/intro/install/[Helm CLI]
 
 == Deploy Hazelcast cluster
 
-There are different ways of deploying Hazelcast to Kubernetes. For the production environment we recommend Helm or Hazelcast Operator, because these methods provide the complete Hazelcast experience:
+There are different ways of deploying Hazelcast to Kubernetes. For the production environment we recommend Helm or Hazelcast Operator because these methods provide the complete Hazelcast experience, including the following aspects:
 
 * Install Hazelcast Management Center at the same time
 * Configure `livenessProbe` and `readinessProbe`
-* Simple updates of Hazelcast configuration
-* Scale up/down Hazelcast cluster
-* Enable rolling upgrades without data loss
-* Automatic RBAC configuration
-* Other useful features
+* Simple Hazelcast configuration
+* Scale up/down Hazelcast cluster without data loss
+* Rolling upgrades without data loss
+* RBAC configuration
 
 [tabs]
 ====
@@ -90,11 +89,11 @@ Members {size:3, ver:3} [
 ]
 ----
 
-At this point you have a running Hazelcast cluster with 3 members which is exposed with a service called `hz-hazelcast`.
+At this point you have a running Hazelcast cluster with 3 members, exposed with a service called `hz-hazelcast`.
 
 == Configure Hazelcast client
 
-To use Hazelcast client, first you need to configure/install Hazelcast client dependency.
+To use Hazelcast client, first, you need to configure/install Hazelcast client dependency.
 
 [tabs]
 ====
@@ -118,13 +117,13 @@ NodeJS::
 --
 [source, bash]
 ----
-npm install hazelcast-client
+var Client = require('hazelcast-client').Client;
 ----
 --
 
 ====
 
-Then, you can configure Hazelcast client in your application code to use your Hazelcast server DNS `hz-hazelcast`.
+Then, you can configure Hazelcast client in your application code to use `hz-hazelcast` (DNS of a service for Hazelcast cluster) as the member address.
 
 [tabs]
 ====
@@ -137,15 +136,17 @@ Java::
 ClientConfig config = new ClientConfig();
 config.getNetworkConfig().addAddress("hz-hazelcast");
 
-// Configure also the connection retry timout
-config.getConnectionStrategyConfig().getConnectionRetryConfig().setClusterConnectTimeoutMillis(Long.MAX_VALUE);
+// Additionally configure connection retry timout
+config.getConnectionStrategyConfig()
+      .getConnectionRetryConfig()
+      .setClusterConnectTimeoutMillis(Long.MAX_VALUE);
 ----
 --
 
 NodeJS::
 +
 --
-[source, nodejs]
+[source, javascript]
 ----
 var clientConfig = {
     network: {
@@ -160,7 +161,7 @@ const client = await Client.newHazelcastClient(clientConfig);
 
 ====
 
-With the configuration above, if you deploy your application to Kubernetes cluster, it should automatically connect into Hazelcast cluster.
+With the configuration above, if you deploy your application to Kubernetes cluster, it should automatically connect to Hazelcast cluster.
 
 == Deploy Hazelcast client application
 
