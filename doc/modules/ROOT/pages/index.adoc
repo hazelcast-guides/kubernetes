@@ -11,7 +11,7 @@ include::{templates-url}/link-to-repo.adoc[]
 
 == What You’ll Learn
 
-In this guide, you will deploy Hazelcast cluster to Kubernetes and connect to it using Hazelcast client.
+In this guide, you will deploy Hazelcast cluster to Kubernetes and connect it to a Kubernetes application.
 
 == Prerequisites
 
@@ -23,12 +23,9 @@ In this guide, you will deploy Hazelcast cluster to Kubernetes and connect to it
 
 There are different ways of deploying Hazelcast to Kubernetes. For the production environment we recommend Helm or Hazelcast Operator because these methods provide the complete Hazelcast experience, including the following aspects:
 
-* Install Hazelcast Management Center at the same time
-* Configure `livenessProbe` and `readinessProbe`
-* Simple Hazelcast configuration
-* Scale up/down Hazelcast cluster without data loss
-* Rolling upgrades without data loss
-* RBAC configuration
+* Automated deployment including the Hazelcast Management Center tool
+* Automated lifecycle operations (scaling, upgrades) to avoid data loss
+* Role-based access control
 
 [tabs]
 ====
@@ -89,16 +86,18 @@ Members {size:3, ver:3} [
 ]
 ----
 
-At this point you have a running Hazelcast cluster with 3 members, exposed with a service called `hz-hazelcast`.
+At this point you have started a Hazelcast cluster with 3 members. It is exposed with a service called `hz-hazelcast`.
 
 == Configure Hazelcast client
 
-To use Hazelcast client, first, you need to configure/install Hazelcast client dependency.
+Use Hazelcast client to connect to the running Hazelcast cluster from your applications.
+
+To use Hazelcast client, add Hazelcast client dependency to your application.
 
 [tabs]
 ====
 
-Java::
+Java (Maven)::
 +
 --
 .pom.xml
@@ -123,7 +122,7 @@ var Client = require('hazelcast-client').Client;
 
 ====
 
-Then, you can configure Hazelcast client in your application code to use `hz-hazelcast` (DNS of a service for Hazelcast cluster) as the member address.
+Configure the Hazelcast client in your application to connect to the `hz-hazelcast` service.
 
 [tabs]
 ====
@@ -161,9 +160,9 @@ const client = await Client.newHazelcastClient(clientConfig);
 
 ====
 
-With the configuration above, if you deploy your application to Kubernetes cluster, it should automatically connect to Hazelcast cluster.
+Your application is now configured to automatically connect to the Hazelcast cluster once it's deployed to Kubernetes.
 
-== Deploy Hazelcast client application
+== Deploy the client application
 
 To deploy your application to Kubernetes cluster, you need first to dockerize it.
 
@@ -200,7 +199,7 @@ If you use a remote Kubernetes cluster and you want to build your own Docker ima
 kubectl run hazelcast-client --image=hazelcastguides/hazelcast-client
 ----
 
-After a moment, your application should run in Kubernetes. You can check its logs.
+After a moment, check application logs to see it running in Kubernetes.
 
 [source, bash]
 ----
