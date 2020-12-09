@@ -240,7 +240,7 @@ Helm::
 --
 [source, bash]
 ----
-helm uninstall hazelcast
+helm uninstall hz-hazelcast
 ----
 --
 
