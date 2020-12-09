@@ -117,7 +117,7 @@ NodeJS::
 --
 [source, bash]
 ----
-var Client = require('hazelcast-client').Client;
+const { Client } = require('hazelcast-client');
 ----
 --
 
@@ -148,13 +148,13 @@ NodeJS::
 --
 [source, javascript]
 ----
-var clientConfig = {
+const clientConfig = {
     network: {
         clusterMembers: [
             'hz-hazelcast'
         ]
     }
-}
+};
 const client = await Client.newHazelcastClient(clientConfig);
 ----
 --
