@@ -97,7 +97,7 @@ To use Hazelcast client, add Hazelcast client dependency to your application.
 [tabs]
 ====
 
-Java (Maven)::
+Java::
 +
 --
 .pom.xml
