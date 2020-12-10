@@ -20,7 +20,7 @@ const clientConfig = {
             throw new Error("Connection failed, check your configuration.")
         }
         console.log("Successful connection!");
-        console.log("Now, `map` will be filled with random entries.");
+        console.log("Starting to fill the map with random entries.");
         while (true) {
             const randomKey = Math.floor(Math.random() * 100000);
             await map.put('key' + randomKey, 'value' + randomKey)
