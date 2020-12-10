@@ -212,8 +212,8 @@ Members {size:3, ver:3} [
         Member [10.216.8.6]:5701 - 7f7dd5f4-e732-4575-89d6-a6e823da38da
 ]
 ...
-Connection Successful!
-Now the map named 'map' will be filled with random entries.
+Successful connection!
+Starting to fill the map with random entries.
 Current map size: 71754
 Current map size: 71758
 Current map size: 71782

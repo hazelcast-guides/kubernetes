@@ -1,21 +1,21 @@
 package com.hazelcast;
 
+import java.util.Random;
+
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 
-import java.util.Random;
-
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         ClientConfig config = new ClientConfig();
         config.getConnectionStrategyConfig().getConnectionRetryConfig().setClusterConnectTimeoutMillis(Long.MAX_VALUE);
         config.getNetworkConfig().addAddress("hz-hazelcast");
         HazelcastInstance client = HazelcastClient.newHazelcastClient(config);
 
-        System.out.println("Connection Successful!");
-        System.out.println("Now the map named 'map' will be filled with random entries.");
+        System.out.println("Successful connection!");
+        System.out.println("Starting to fill the map with random entries.");
 
         IMap<String, String> map = client.getMap("map");
         Random random = new Random();
@@ -25,6 +25,7 @@ public class Main {
             map.get("key-" + random.nextInt(100_000));
             if (randomKey % 100 == 0) {
                 System.out.println("Current map size: " + map.size());
+                Thread.sleep(1000);
             }
         }
     }
