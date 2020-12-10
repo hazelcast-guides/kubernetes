@@ -19,7 +19,7 @@ const clientConfig = {
         if (res !== 'value') {
             throw new Error('Connection failed, check your configuration.');
         }
-        console.log('Connection Successful!');
+        console.log('Successful connection!');
         console.log('Now, `map` will be filled with random entries.');
         while (true) {
             const randomKey = Math.floor(Math.random() * 100000);
