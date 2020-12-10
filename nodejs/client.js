@@ -24,9 +24,10 @@ const clientConfig = {
         while (true) {
             const randomKey = Math.floor(Math.random() * 100000);
             await map.put('key' + randomKey, 'value' + randomKey);
-            await map.get('key' + randomKey);
             if (randomKey % 100 === 0) {
-                map.size().then((size) => console.log(`map size: ${size}`));
+                const size = await map.size();
+                console.log(`Current map size: ${size}`);
+                await new Promise((resolve) => setTimeout(resolve, 1000));
             }
         }
     } catch (err) {
