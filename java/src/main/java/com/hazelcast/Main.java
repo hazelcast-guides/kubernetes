@@ -22,7 +22,6 @@ public class Main {
         while (true) {
             int randomKey = random.nextInt(100_000);
             map.put("key-" + randomKey, "value-" + randomKey);
-            map.get("key-" + random.nextInt(100_000));
             if (randomKey % 100 == 0) {
                 System.out.println("Current map size: " + map.size());
                 Thread.sleep(1000);
