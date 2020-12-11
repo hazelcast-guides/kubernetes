@@ -20,6 +20,8 @@ jobs:
           version: "v0.9.0"
 
       - name: Deploy to Kuberenetes
+        env:
+          HAZELCAST_VERSION: 4.1
         run: |-
           kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-kubernetes/master/rbac.yaml
           kubectl run hz-hazelcast-0 --image=hazelcast/hazelcast:$HAZELCAST_VERSION -l "role=hazelcast"
