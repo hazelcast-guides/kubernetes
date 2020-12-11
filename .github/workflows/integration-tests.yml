@@ -47,6 +47,7 @@ jobs:
         run: |-
           sleep 5
           kubectl describe pod hazelcast-client
+          kubectl logs hazelcast-client
           kubectl wait --for=condition=ready pod/hazelcast-client --timeout=150s
       
       - name: Verify client application
