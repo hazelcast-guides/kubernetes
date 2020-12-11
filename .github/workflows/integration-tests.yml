@@ -41,10 +41,12 @@ jobs:
 
       - name: Deploy client application
         run: |-
-          kind load docker-image hazelcast-client
+          kind load docker-image --name=kind hazelcast-client
           kubectl run hazelcast-client --image=hazelcast-client
       - name: Wait for client application
         run: |-
+          sleep 5
+          kubectl describe pod hazelcast-client
           kubectl wait --for=condition=ready pod/hazelcast-client --timeout=150s
       
       - name: Verify client application
