@@ -19,7 +19,7 @@ jobs:
         with:
           version: "v0.9.0"
 
-      - name: Deploy to Kuberenetes
+      - name: Deploy Hazelcast cluster
         env:
           HAZELCAST_VERSION: 4.1
         run: |-
@@ -29,16 +29,22 @@ jobs:
           kubectl run hz-hazelcast-2 --image=hazelcast/hazelcast:$HAZELCAST_VERSION -l "role=hazelcast"
           kubectl create service clusterip hz-hazelcast --tcp=5701 -o yaml --dry-run=client | kubectl set selector --local -f - "role=hazelcast" -o yaml | kubectl create -f -
 
-      - name: Wait for successful Deployment
+      - name: Wait for Hazelcast cluster
         run: |-
           kubectl wait --for=condition=ready pod/hz-hazelcast-0 --timeout=150s
           kubectl wait --for=condition=ready pod/hz-hazelcast-1 --timeout=150s
           kubectl wait --for=condition=ready pod/hz-hazelcast-2 --timeout=150s
 
-      - name: Build client
+      - name: Deploy client application
         run: |-
           docker build -t hazelcastguides/hazelcast-client java
-      
-      - name: Run client
-        run: |-
           kubectl run hazelcast-client --image=hazelcast-client
+      
+      - name: Verify client application
+        run: |-
+          kubectl wait --for=condition=ready pod/hazelcast-client --timeout=150s
+          # sleep for 10 seconds so that Spring application is started
+          sleep 10
+          kubectl logs pod/hazelcast-client | grep 'Successful connection! -q
+          exit $?
+        

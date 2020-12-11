@@ -162,7 +162,7 @@ const client = await Client.newHazelcastClient(clientConfig);
 
 Your application is now configured to automatically connect to the Hazelcast cluster once it's deployed to Kubernetes.
 
-== Deploy the client application
+== Deploy client application
 
 To deploy your application to Kubernetes cluster, you need first to dockerize it.
 
