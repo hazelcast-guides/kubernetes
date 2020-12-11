@@ -38,12 +38,12 @@ jobs:
       - name: Deploy client application
         run: |-
           docker build -t hazelcast-client java
+          kind load docker-image hazelcast-client
           kubectl run hazelcast-client --image=hazelcast-client
       
       - name: Verify client application
         run: |-
           kubectl wait --for=condition=ready pod/hazelcast-client --timeout=150s
-          # sleep for 10 seconds so that Spring application is started
           sleep 10
           kubectl logs pod/hazelcast-client
           kubectl logs pod/hazelcast-client | grep 'Successful connection!' -q
