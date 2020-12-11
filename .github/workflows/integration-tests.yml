@@ -13,8 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        deployment-type: [ 'kubectl' ]
-        client-language: [ 'java', 'nodejs' ]
+        deployment-type: [ 'operator', 'kubectl' ]
+        client-language: [ 'nodejs' ]
+        # client-language: [ 'java', 'nodejs' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -23,7 +24,24 @@ jobs:
         with:
           version: "v0.9.0"
 
-      - name: Deploy Hazelcast cluster
+      - name: Deploy Hazelcast cluster (Helm)
+        if: startsWith(matrix.deployment-type, 'helm')
+        run: |-
+          helm repo add hazelcast https://hazelcast-charts.s3.amazonaws.com/
+          helm repo update
+          helm install hz-hazelcast hazelcast/hazelcast
+
+      - name: Deploy Hazelcast cluster (Hazelcast Operator)
+        if: startsWith(matrix.deployment-type, 'operator')
+        run: |-
+          kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator-rbac.yaml
+          kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast-rbac.yaml
+          kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcastcluster.crd.yaml
+          kubectl --validate=false apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator.yaml
+          kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast.yaml
+
+      - name: Deploy Hazelcast cluster (Kubectl)
+        if: startsWith(matrix.deployment-type, 'kubectl')
         env:
           HAZELCAST_VERSION: 4.1
         run: |-
