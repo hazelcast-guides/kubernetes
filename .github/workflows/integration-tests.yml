@@ -1,0 +1,42 @@
+name: Integration tests
+on:
+  push:
+    paths-ignore:
+      - 'doc/**'
+  pull_request:
+    paths-ignore:
+      - 'doc/**'
+
+jobs:
+  run-tests:
+    name: Intergration tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: engineerd/setup-kind@v0.5.0
+        with:
+          version: "v0.9.0"
+
+      - name: Deploy to Kuberenetes
+        run: |-
+          kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-kubernetes/master/rbac.yaml
+          kubectl run hz-hazelcast-0 --image=hazelcast/hazelcast:$HAZELCAST_VERSION -l "role=hazelcast"
+          kubectl run hz-hazelcast-1 --image=hazelcast/hazelcast:$HAZELCAST_VERSION -l "role=hazelcast"
+          kubectl run hz-hazelcast-2 --image=hazelcast/hazelcast:$HAZELCAST_VERSION -l "role=hazelcast"
+          kubectl create service clusterip hz-hazelcast --tcp=5701 -o yaml --dry-run=client | kubectl set selector --local -f - "role=hazelcast" -o yaml | kubectl create -f -
+
+      - name: Wait for successful Deployment
+        run: |-
+          kubectl wait --for=condition=ready pod/hz-hazelcast-0 --timeout=150s
+          kubectl wait --for=condition=ready pod/hz-hazelcast-1 --timeout=150s
+          kubectl wait --for=condition=ready pod/hz-hazelcast-2 --timeout=150s
+
+      - name: Build client
+        run: |-
+          docker build -t hazelcastguides/hazelcast-client java
+      
+      - name: Run client
+        run: |-
+          kubectl run hazelcast-client --image=hazelcast-client
