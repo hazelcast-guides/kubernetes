@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        deployment-type: [ 'operator', 'kubectl' ]
+        deployment-type: [ 'operator' ]
         client-language: [ 'nodejs' ]
         # client-language: [ 'java', 'nodejs' ]
     steps:
@@ -39,7 +39,8 @@ jobs:
           kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcastcluster.crd.yaml
           kubectl --validate=false apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator.yaml
           kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast.yaml
-          sleep 10
+          sleep 30
+          kubectl get all
 
       - name: Deploy Hazelcast cluster (Kubectl)
         if: startsWith(matrix.deployment-type, 'kubectl')
