@@ -37,7 +37,7 @@ jobs:
 
       - name: Build client application
         run: |-
-          docker build -t hazelcast-client node
+          docker build -t hazelcast-client nodejs
 
       - name: Deploy client application
         run: |-
