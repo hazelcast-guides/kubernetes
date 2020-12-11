@@ -37,7 +37,7 @@ jobs:
 
       - name: Deploy client application
         run: |-
-          docker build -t hazelcastguides/hazelcast-client java
+          docker build -t hazelcast-client java
           kubectl run hazelcast-client --image=hazelcast-client
       
       - name: Verify client application
