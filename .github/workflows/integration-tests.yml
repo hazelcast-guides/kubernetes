@@ -13,9 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        deployment-type: [ 'operator' ]
-        client-language: [ 'nodejs' ]
-        # client-language: [ 'java', 'nodejs' ]
+        deployment-type: [ 'operator', 'kubectl' ]
+        client-language: [ 'java', 'nodejs' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
