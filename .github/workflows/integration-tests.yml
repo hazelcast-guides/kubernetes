@@ -39,6 +39,7 @@ jobs:
           kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcastcluster.crd.yaml
           kubectl --validate=false apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator.yaml
           kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast.yaml
+          sleep 10
 
       - name: Deploy Hazelcast cluster (Kubectl)
         if: startsWith(matrix.deployment-type, 'kubectl')
