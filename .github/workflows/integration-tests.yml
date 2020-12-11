@@ -43,16 +43,10 @@ jobs:
         run: |-
           kind load docker-image hazelcast-client:test
           kubectl run hazelcast-client --image=hazelcast-client:test
-
-      - name: Wait for client application
-        run: |-
-          kubectl wait --for=condition=ready pod/hazelcast-client --timeout=150s
-          kubectl logs hazelcast-client
+          kubectl wait --for=condition=ready pod/hazelcast-client --timeout=150s         
       
       - name: Verify client application
         run: |-
           sleep 10
-          kubectl logs pod/hazelcast-client
-          kubectl logs pod/hazelcast-client | grep 'Successful connection!' -q
-          exit $?
+          kubectl logs pod/hazelcast-client | grep 'Successful connectionlala!' -q
         
