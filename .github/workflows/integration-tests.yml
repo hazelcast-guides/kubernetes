@@ -48,5 +48,5 @@ jobs:
       - name: Verify client application
         run: |-
           sleep 10
-          kubectl logs pod/hazelcast-client | grep 'Successful connectionlala!' -q
+          kubectl logs pod/hazelcast-client | grep 'Successful connection!' -q
         
