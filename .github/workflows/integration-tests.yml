@@ -37,12 +37,12 @@ jobs:
 
       - name: Build client application
         run: |-
-          docker build -t hazelcast-client java
+          docker build -t hazelcast-client node
 
       - name: Deploy client application
         run: |-
-          kind load docker-image --name=kind hazelcast-client
-          kubectl run hazelcast-client --image=hazelcast-client
+          kind load docker-image hazelcast-client
+          kubectl run hazelcast-client --image=hazelcast-client --image-pull-policy=Never
       - name: Wait for client application
         run: |-
           sleep 5
