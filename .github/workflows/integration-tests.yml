@@ -45,6 +45,7 @@ jobs:
           kubectl wait --for=condition=ready pod/hazelcast-client --timeout=150s
           # sleep for 10 seconds so that Spring application is started
           sleep 10
-          kubectl logs pod/hazelcast-client | grep 'Successful connection! -q
+          kubectl logs pod/hazelcast-client
+          kubectl logs pod/hazelcast-client | grep 'Successful connection!' -q
           exit $?
         
