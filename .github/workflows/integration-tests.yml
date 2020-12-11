@@ -44,6 +44,7 @@ jobs:
           kind load docker-image hazelcast-client
           kubectl run hazelcast-client --image=hazelcast-client
       - name: Wait for client application
+        run: |-
           kubectl wait --for=condition=ready pod/hazelcast-client --timeout=150s
       
       - name: Verify client application
