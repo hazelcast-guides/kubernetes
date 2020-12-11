@@ -35,15 +35,19 @@ jobs:
           kubectl wait --for=condition=ready pod/hz-hazelcast-1 --timeout=150s
           kubectl wait --for=condition=ready pod/hz-hazelcast-2 --timeout=150s
 
-      - name: Deploy client application
+      - name: Build client application
         run: |-
           docker build -t hazelcast-client java
+
+      - name: Deploy client application
+        run: |-
           kind load docker-image hazelcast-client
           kubectl run hazelcast-client --image=hazelcast-client
+      - name: Wait for client application
+          kubectl wait --for=condition=ready pod/hazelcast-client --timeout=150s
       
       - name: Verify client application
         run: |-
-          kubectl wait --for=condition=ready pod/hazelcast-client --timeout=150s
           sleep 10
           kubectl logs pod/hazelcast-client
           kubectl logs pod/hazelcast-client | grep 'Successful connection!' -q
