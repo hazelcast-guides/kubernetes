@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        deployment-type: [ 'operator', 'kubectl' ]
+        deployment-type: [ 'helm' ]
         client-language: [ 'java', 'nodejs' ]
     steps:
       - name: Checkout
