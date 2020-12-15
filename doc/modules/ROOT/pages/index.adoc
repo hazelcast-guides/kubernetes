@@ -187,6 +187,15 @@ docker build -t hazelcastguides/hazelcast-client nodejs
 ----
 --
 
+Python::
++
+--
+[source, bash]
+----
+docker build -t hazelcastguides/hazelcast-client python
+----
+--
+
 ====
 
 [NOTE]

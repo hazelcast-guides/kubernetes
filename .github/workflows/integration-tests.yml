@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         deployment-type: [ 'helm', 'operator', 'kubectl' ]
-        client-language: [ 'java', 'nodejs' ]
+        client-language: [ 'java', 'nodejs', 'python' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
