@@ -7,7 +7,7 @@
 
 int main() {
     hazelcast::client::client_config config;
-    config.get_network_config().add_address(address("hz-hazelcast", 5701));
+    config.get_network_config().add_address(hazelcast::client::address("hz-hazelcast", 5701));
     config.get_network_config().set_connection_attempt_limit(INT32_MAX);
     hazelcast::client::hazelcast_client hz(std::move(config));
 
