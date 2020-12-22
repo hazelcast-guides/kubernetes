@@ -114,9 +114,18 @@ Java::
 NodeJS::
 +
 --
-[source, bash]
+[source, javascript]
 ----
 const { Client } = require('hazelcast-client');
+----
+--
+
+C++::
++
+--
+[source, cpp]
+----
+#include <hazelcast/client/hazelcast_client.h>
 ----
 --
 
@@ -158,6 +167,20 @@ const client = await Client.newHazelcastClient(clientConfig);
 ----
 --
 
+C++::
++
+--
+[source, cpp]
+----
+hazelcast::client::client_config config;
+config.get_network_config().add_address(
+    hazelcast::client::address("hz-hazelcast", 5701)
+);
+config.get_network_config().set_connection_attempt_limit(INT32_MAX);
+hazelcast::client::hazelcast_client hz(std::move(config));
+----
+--
+
 ====
 
 Your application is now configured to automatically connect to the Hazelcast cluster once it's deployed to Kubernetes.
@@ -184,6 +207,15 @@ NodeJS::
 [source, bash]
 ----
 docker build -t hazelcastguides/hazelcast-client nodejs
+----
+--
+
+C++::
++
+--
+[source, bash]
+----
+docker build -t hazelcastguides/hazelcast-client cpp
 ----
 --
 
