@@ -1,5 +1,3 @@
-#define BOOST_THREAD_VERSION 5
-
 #include <iostream>
 #include <hazelcast/client/hazelcast_client.h>
 #include <thread>
@@ -7,8 +5,7 @@
 
 int main() {
     hazelcast::client::client_config config;
-    config.get_network_config().add_address(hazelcast::client::address("hz-hazelcast", 5701));
-    config.get_network_config().set_connection_attempt_limit(INT32_MAX);
+    config.get_network_config().add_address({"localhost", 5701}).set_connection_attempt_limit(INT32_MAX);
     hazelcast::client::hazelcast_client hz(std::move(config));
 
     std::cout << "Successful connection!" << std::endl;

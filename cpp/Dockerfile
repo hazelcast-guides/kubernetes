@@ -11,7 +11,7 @@ RUN wget https://github.com/hazelcast/hazelcast-cpp-client/releases/download/v${
 # build client application
 COPY . .
 COPY hazelcast/Linux_64/lib/libHazelcastClient4.0-SNAPSHOT_64.so /usr/local/lib
-RUN g++ Client.cpp -std=c++11 -o Client -lboost_thread -lboost_chrono -Ihazelcast/include -lpthread hazelcast/Linux_64/lib/libHazelcastClient4.0-SNAPSHOT_64.so
+RUN g++ Client.cpp -std=c++11 -o Client -DBOOST_THREAD_VERSION=5 -lboost_thread -lboost_chrono -Ihazelcast/include -lpthread hazelcast/Linux_64/lib/libHazelcastClient4.0-SNAPSHOT_64.so
 
 # clean up
 RUN rm -r hazelcast Client.cpp
