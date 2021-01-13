@@ -114,9 +114,18 @@ Java::
 NodeJS::
 +
 --
-[source, bash]
+[source, javascript]
 ----
 const { Client } = require('hazelcast-client');
+----
+--
+
+Python::
++
+--
+[source, python]
+----
+import hazelcast
 ----
 --
 
@@ -155,6 +164,17 @@ const clientConfig = {
     }
 };
 const client = await Client.newHazelcastClient(clientConfig);
+----
+--
+
+Python::
++
+--
+[source, python]
+----
+client = hazelcast.HazelcastClient(
+    cluster_members=["hz-hazelcast"]
+)
 ----
 --
 
