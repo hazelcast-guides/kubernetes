@@ -116,7 +116,16 @@ NodeJS::
 --
 [source, bash]
 ----
-const { Client } = require('hazelcast-client');
+npm install hazelcast-client
+----
+--
+
+Python::
++
+--
+[source, bash]
+----
+pip install hazelcast-python-client
 ----
 --
 
@@ -147,6 +156,8 @@ NodeJS::
 --
 [source, javascript]
 ----
+const { Client } = require('hazelcast-client');
+
 const clientConfig = {
     network: {
         clusterMembers: [
@@ -155,6 +166,19 @@ const clientConfig = {
     }
 };
 const client = await Client.newHazelcastClient(clientConfig);
+----
+--
+
+Python::
++
+--
+[source, python]
+----
+import hazelcast
+
+client = hazelcast.HazelcastClient(
+    cluster_members=["hz-hazelcast"],
+)
 ----
 --
 
@@ -184,6 +208,15 @@ NodeJS::
 [source, bash]
 ----
 docker build -t hazelcastguides/hazelcast-client nodejs
+----
+--
+
+Python::
++
+--
+[source, bash]
+----
+docker build -t hazelcastguides/hazelcast-client python
 ----
 --
 
