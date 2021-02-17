@@ -129,6 +129,16 @@ pip install hazelcast-python-client
 ----
 --
 
+C++::
++
+--
+[source, bash]
+----
+curl -Lo hazelcast-cpp-client.tar.gz https://github.com/hazelcast/hazelcast-cpp-client/archive/v${VERSION}.tar.gz
+tar xzf hazelcast-cpp-client.tar.gz
+----
+--
+
 ====
 
 Configure the Hazelcast client in your application to connect to the `hz-hazelcast` service.
@@ -182,6 +192,20 @@ client = hazelcast.HazelcastClient(
 ----
 --
 
+C++::
++
+--
+[source, cpp]
+----
+#include <hazelcast/client/hazelcast_client.h>
+
+hazelcast::client::client_config config;
+config.get_network_config()
+      .add_address({"hz-hazelcast", 5701})
+auto hz = hazelcast::new_client(std::move(config)).get();
+----
+--
+
 ====
 
 Your application is now configured to automatically connect to the Hazelcast cluster once it's deployed to Kubernetes.
@@ -217,6 +241,15 @@ Python::
 [source, bash]
 ----
 docker build -t hazelcastguides/hazelcast-client python
+----
+--
+
+C++::
++
+--
+[source, bash]
+----
+docker build -t hazelcastguides/hazelcast-client cpp
 ----
 --
 
