@@ -5,8 +5,8 @@
 
 int main() {
     hazelcast::client::client_config config;
-    config.get_network_config().add_address({"hz-hazelcast", 5701}).set_connection_attempt_limit(INT32_MAX);
-    hazelcast::client::hazelcast_client hz(std::move(config));
+    config.get_network_config().add_address({"hz-hazelcast", 5701});
+    auto hz = hazelcast::new_client(std::move(config)).get();
 
     std::cout << "Successful connection!" << std::endl;
     std::cout << "Starting to fill the map with random entries." << std::endl;
