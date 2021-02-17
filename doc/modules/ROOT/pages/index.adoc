@@ -114,9 +114,9 @@ Java::
 NodeJS::
 +
 --
-[source, javascript]
+[source, bash]
 ----
-const { Client } = require('hazelcast-client');
+npm install hazelcast-client
 ----
 --
 
@@ -132,9 +132,10 @@ pip install hazelcast-python-client
 C++::
 +
 --
-[source, cpp]
+[source, bash]
 ----
-#include <hazelcast/client/hazelcast_client.h>
+curl -Lo hazelcast-cpp-client.tar.gz https://github.com/hazelcast/hazelcast-cpp-client/archive/v${VERSION}.tar.gz
+tar xzf hazelcast-cpp-client.tar.gz
 ----
 --
 
@@ -165,6 +166,8 @@ NodeJS::
 --
 [source, javascript]
 ----
+const { Client } = require('hazelcast-client');
+
 const clientConfig = {
     network: {
         clusterMembers: [
@@ -194,6 +197,8 @@ C++::
 --
 [source, cpp]
 ----
+#include <hazelcast/client/hazelcast_client.h>
+
 hazelcast::client::client_config config;
 config.get_network_config()
       .add_address({"hz-hazelcast", 5701})
