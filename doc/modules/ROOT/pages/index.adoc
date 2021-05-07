@@ -47,10 +47,8 @@ Hazelcast Operator::
 --
 [source, bash]
 ----
-kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator-rbac.yaml
 kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast-rbac.yaml
-kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcastcluster.crd.yaml
-kubectl --validate=false apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator.yaml
+kubectl --validate=false apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/bundle.yaml
 kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast.yaml
 ----
 --
@@ -315,11 +313,9 @@ Hazelcast Operator::
 --
 [source, bash]
 ----
-kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast.yaml
-kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator.yaml
-kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcastcluster.crd.yaml
-kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast-rbac.yaml
-kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator-rbac.yaml
+kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast.yaml
+kubectl --validate=false apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/bundle.yaml
+kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast-rbac.yaml
 ----
 --
 
