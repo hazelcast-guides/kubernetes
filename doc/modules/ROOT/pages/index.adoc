@@ -153,11 +153,6 @@ Java::
 ----
 ClientConfig config = new ClientConfig();
 config.getNetworkConfig().addAddress("hz-hazelcast");
-
-// Additionally configure connection retry timout
-config.getConnectionStrategyConfig()
-      .getConnectionRetryConfig()
-      .setClusterConnectTimeoutMillis(Long.MAX_VALUE);
 ----
 --
 
