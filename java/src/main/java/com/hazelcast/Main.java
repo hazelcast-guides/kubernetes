@@ -10,7 +10,6 @@ import com.hazelcast.map.IMap;
 public class Main {
     public static void main(String[] args) throws Exception {
         ClientConfig config = new ClientConfig();
-        config.getConnectionStrategyConfig().getConnectionRetryConfig().setClusterConnectTimeoutMillis(Long.MAX_VALUE);
         config.getNetworkConfig().addAddress("hz-hazelcast");
         HazelcastInstance client = HazelcastClient.newHazelcastClient(config);
 
