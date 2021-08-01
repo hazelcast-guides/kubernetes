@@ -9,9 +9,10 @@ on:
 
 jobs:
   run-tests:
-    name: Intergration tests
+    name: Integration tests
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         deployment-type: [ 'helm', 'operator', 'kubectl' ]
         client-language: [ 'java', 'nodejs', 'python', 'cpp' ]
@@ -21,7 +22,7 @@ jobs:
 
       - uses: engineerd/setup-kind@v0.5.0
         with:
-          version: "v0.9.0"
+          version: "v0.11.1"
 
       - name: Deploy Hazelcast cluster (Helm)
         if: startsWith(matrix.deployment-type, 'helm')
