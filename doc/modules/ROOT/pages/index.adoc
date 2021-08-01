@@ -144,7 +144,7 @@ Go::
 --
 [source, bash]
 ----
-go get github.com/hazelcast/hazelcast-go-client@v1.0.0-preview.1
+go get github.com/hazelcast/hazelcast-go-client@v1.0.0
 ----
 --
 
@@ -222,9 +222,10 @@ import (
 )
 
 func main() {
-    cb := hazelcast.NewConfigBuilder()
-    cb.Cluster().SetAddrs("hz-hazelcast:5701")
-    client, err := hazelcast.StartNewClientWithConfig(cb)
+	config := hazelcast.Config{}
+	config.Cluster.Network.SetAddresses("hz-hazelcast:5701")
+	ctx := context.Background()
+	client, err := hazelcast.StartNewClientWithConfig(ctx, config)
     if err != nil {
         log.Fatal(err)
     }

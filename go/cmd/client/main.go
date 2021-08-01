@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"math/rand"
@@ -10,15 +11,16 @@ import (
 )
 
 func main() {
-	cb := hazelcast.NewConfigBuilder()
-	cb.Cluster().SetAddrs("hz-hazelcast:5701")
-	client, err := hazelcast.StartNewClientWithConfig(cb)
+	config := hazelcast.Config{}
+	config.Cluster.Network.SetAddresses("hz-hazelcast:5701")
+	ctx := context.Background()
+	client, err := hazelcast.StartNewClientWithConfig(ctx, config)
 	if err != nil {
 		log.Fatal(err)
 	}
 	log.Println("Successful connection!")
 	log.Println("Starting to fill the map with random entries.")
-	m, err := client.GetMap("map")
+	m, err := client.GetMap(ctx, "map")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -26,11 +28,11 @@ func main() {
 		num := rand.Intn(100_000)
 		key := fmt.Sprintf("key-%d", num)
 		value := fmt.Sprintf("value-%d", num)
-		if _, err = m.Put(key, value); err != nil {
+		if _, err = m.Put(ctx, key, value); err != nil {
 			log.Println("ERR:", err.Error())
 		} else {
 			if num % 100 == 0 {
-				if mapSize, err := m.Size(); err != nil {
+				if mapSize, err := m.Size(ctx); err != nil {
 					log.Println("ERR:", err.Error())
 				} else {
 					log.Println("Current map size:", mapSize)
