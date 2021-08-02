@@ -139,6 +139,15 @@ tar xzf hazelcast-cpp-client.tar.gz
 ----
 --
 
+Go::
++
+--
+[source, bash]
+----
+go get github.com/hazelcast/hazelcast-go-client@v1.0.0
+----
+--
+
 ====
 
 Configure the Hazelcast client in your application to connect to the `hz-hazelcast` service.
@@ -201,6 +210,29 @@ auto hz = hazelcast::new_client(std::move(config)).get();
 ----
 --
 
+Go::
++
+--
+[source, go]
+----
+import (
+	"log"
+
+	"github.com/hazelcast/hazelcast-go-client"
+)
+
+func main() {
+	config := hazelcast.Config{}
+	config.Cluster.Network.SetAddresses("hz-hazelcast:5701")
+	ctx := context.Background()
+	client, err := hazelcast.StartNewClientWithConfig(ctx, config)
+    if err != nil {
+        log.Fatal(err)
+    }
+}
+----
+--
+
 ====
 
 Your application is now configured to automatically connect to the Hazelcast cluster once it's deployed to Kubernetes.
@@ -245,6 +277,15 @@ C++::
 [source, bash]
 ----
 docker build -t hazelcastguides/hazelcast-client cpp
+----
+--
+
+Go::
++
+--
+[source, bash]
+----
+docker build -t hazelcastguides/hazelcast-client go
 ----
 --
 
