@@ -21,7 +21,7 @@ In this guide, you will deploy Hazelcast cluster to Kubernetes and connect it to
 
 == Deploy Hazelcast cluster
 
-There are different ways of deploying Hazelcast to Kubernetes. For the production environment we recommend Helm or Hazelcast Operator because these methods provide the complete Hazelcast experience, including the following aspects:
+There are different ways of deploying Hazelcast to Kubernetes. For the production environment we recommend Hazelcast Platform Operator or Helm because these methods provide the complete Hazelcast experience, including the following aspects:
 
 * Automated deployment including the Hazelcast Management Center tool
 * Automated lifecycle operations (scaling, upgrades) to avoid data loss
