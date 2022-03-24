@@ -4,7 +4,6 @@
 :page-product: cloud
 :page-categories: Deployment, Kubernetes
 :page-lang: java, go, node, python, cplus
-:page-enterprise: true
 :page-est-time: 20 mins
 :framework: Kubernetes
 :description: In this tutorial, you will deploy a Hazelcast cluster to Kubernetes and connect it to a Kubernetes application.
