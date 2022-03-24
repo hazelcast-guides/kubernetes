@@ -1,19 +1,19 @@
-:github-address: https://github.com/hazelcast-guides/kubernetes
-:templates-url: templates:ROOT:page$/
-:hazelcast: Hazelcast IMDG
-:framework: Kubernetes
-
 = Hazelcast for Kubernetes
-
-This sample is a guideline on how to start and use Hazelcast cluster in Kubernetes.
-
-include::{templates-url}/link-to-repo.adoc[]
+:templates-url: templates:ROOT:page$/
+:page-layout: tutorial
+:page-product: cloud
+:page-categories: Deployment, Kubernetes
+:page-lang: java, go, node, python, cplus
+:page-enterprise: true
+:page-est-time: 20 mins
+:framework: Kubernetes
+:description: In this tutorial, you will deploy a Hazelcast cluster to Kubernetes and connect it to a Kubernetes application.
 
 == What You’ll Learn
 
-In this guide, you will deploy Hazelcast cluster to Kubernetes and connect it to a Kubernetes application.
+{description}
 
-== Prerequisites
+== Before you Begin
 
 * Up and running https://kubernetes.io/[Kubernetes] cluster (version 1.9 or higher)
 * Kubernetes command line tool, https://kubernetes.io/docs/tasks/tools/install-kubectl/[kubectl]
@@ -373,6 +373,7 @@ kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-kubernet
 ====
 
 == See Also
-- xref:kubernetes-hpa:ROOT:index.adoc[Kubernetes HPA for Hazelcast cluster]
-- xref:kubernetes-external-client:ROOT:index.adoc[External Hazelcast Client on Kubernetes]
-- xref:kubernetes-sidecar:ROOT:index.adoc[Hazelcast as Sidecar container]
+
+- xref:kubernetes-hpa.adoc[]
+- xref:kubernetes-external-client.adoc[]
+- xref:kubernetes-sidecar.adoc[]
