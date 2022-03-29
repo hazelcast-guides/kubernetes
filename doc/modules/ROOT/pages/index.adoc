@@ -21,7 +21,7 @@ In this guide, you will deploy Hazelcast cluster to Kubernetes and connect it to
 
 == Deploy Hazelcast cluster
 
-There are different ways of deploying Hazelcast to Kubernetes. For the production environment we recommend Helm or Hazelcast Operator because these methods provide the complete Hazelcast experience, including the following aspects:
+There are different ways of deploying Hazelcast to Kubernetes. For the production environment we recommend Hazelcast Platform Operator or Helm because these methods provide the complete Hazelcast experience, including the following aspects:
 
 * Automated deployment including the Hazelcast Management Center tool
 * Automated lifecycle operations (scaling, upgrades) to avoid data loss
@@ -41,17 +41,19 @@ helm install hz-hazelcast hazelcast/hazelcast
 ----
 --
 
-Hazelcast Operator::
+Hazelcast Platform Operator::
 +
 
 --
 [source, bash]
 ----
-kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator-rbac.yaml
-kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast-rbac.yaml
-kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcastcluster.crd.yaml
-kubectl --validate=false apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator.yaml
-kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast.yaml
+kubectl apply -f https://repository.hazelcast.com/operator/bundle-latest.yaml
+cat << EOF | kubectl apply -f -
+apiVersion: hazelcast.com/v1alpha1
+kind: Hazelcast
+metadata:
+  name: hz-hazelcast
+EOF
 ----
 --
 
@@ -345,17 +347,15 @@ helm uninstall hz-hazelcast
 ----
 --
 
-Hazelcast Operator::
+Hazelcast Platform Operator::
 +
 
 --
 [source, bash]
 ----
-kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast.yaml
-kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator.yaml
-kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcastcluster.crd.yaml
-kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast-rbac.yaml
-kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator-rbac.yaml
+kubectl delete hazelcast hz-hazelcast
+kubectl delete -f https://repository.hazelcast.com/operator/bundle-latest.yaml
+
 ----
 --
 
