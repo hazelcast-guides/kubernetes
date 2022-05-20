@@ -1,12 +1,14 @@
 = Hazelcast for Kubernetes
 :templates-url: templates:ROOT:page$/
 :page-layout: tutorial
-:page-product: cloud
-:page-categories: Deployment, Kubernetes
+:page-product: platform
+:page-categories: Deployment, Cloud Native
 :page-lang: java, go, node, python, cplus
 :page-est-time: 20 mins
 :framework: Kubernetes
 :description: In this tutorial, you will deploy a Hazelcast cluster to Kubernetes and connect it to a Kubernetes application.
+
+NOTE: Hazelcast now offers the Hazelcast Platform Operator. We recommend using this operator when working with Hazelcast in Kubernetes. See xref:kubernetes-external-client.adoc[].
 
 == What You’ll Learn
 
@@ -20,7 +22,7 @@
 
 == Deploy Hazelcast cluster
 
-There are different ways of deploying Hazelcast to Kubernetes. For the production environment we recommend Helm or Hazelcast Operator because these methods provide the complete Hazelcast experience, including the following aspects:
+There are different ways of deploying Hazelcast to Kubernetes. For the production environment we recommend Helm because this method provides the complete Hazelcast experience, including the following aspects:
 
 * Automated deployment including the Hazelcast Management Center tool
 * Automated lifecycle operations (scaling, upgrades) to avoid data loss
@@ -37,20 +39,6 @@ Helm::
 helm repo add hazelcast https://hazelcast-charts.s3.amazonaws.com/
 helm repo update
 helm install hz-hazelcast hazelcast/hazelcast
-----
---
-
-Hazelcast Operator::
-+
-
---
-[source, bash]
-----
-kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator-rbac.yaml
-kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast-rbac.yaml
-kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcastcluster.crd.yaml
-kubectl --validate=false apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator.yaml
-kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast.yaml
 ----
 --
 
@@ -344,19 +332,6 @@ helm uninstall hz-hazelcast
 ----
 --
 
-Hazelcast Operator::
-+
-
---
-[source, bash]
-----
-kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast.yaml
-kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator.yaml
-kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcastcluster.crd.yaml
-kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/hazelcast-rbac.yaml
-kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-operator/master/hazelcast-operator/operator-rbac.yaml
-----
---
 
 Kubectl::
 +
