@@ -22,7 +22,7 @@ NOTE: Hazelcast now offers the Hazelcast Platform Operator. We recommend using t
 
 == Deploy Hazelcast cluster
 
-There are different ways of deploying Hazelcast to Kubernetes. For the production environment we recommend Helm because this method provides the complete Hazelcast experience, including the following aspects:
+There are different ways of deploying Hazelcast to Kubernetes. For the production environment we recommend Hazelcast Platform Operator or Helm because these methods provide the complete Hazelcast experience, including the following aspects:
 
 * Automated deployment including the Hazelcast Management Center tool
 * Automated lifecycle operations (scaling, upgrades) to avoid data loss
@@ -39,6 +39,22 @@ Helm::
 helm repo add hazelcast https://hazelcast-charts.s3.amazonaws.com/
 helm repo update
 helm install hz-hazelcast hazelcast/hazelcast
+----
+--
+
+Hazelcast Platform Operator::
++
+
+--
+[source, bash]
+----
+kubectl apply -f https://repository.hazelcast.com/operator/bundle-latest.yaml
+cat << EOF | kubectl apply -f -
+apiVersion: hazelcast.com/v1alpha1
+kind: Hazelcast
+metadata:
+  name: hz-hazelcast
+EOF
 ----
 --
 
@@ -332,6 +348,17 @@ helm uninstall hz-hazelcast
 ----
 --
 
+Hazelcast Platform Operator::
++
+
+--
+[source, bash]
+----
+kubectl delete hazelcast hz-hazelcast
+kubectl delete -f https://repository.hazelcast.com/operator/bundle-latest.yaml
+
+----
+--
 
 Kubectl::
 +
