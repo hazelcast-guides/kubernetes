@@ -66,7 +66,7 @@ Kubectl::
 --
 [source, bash]
 ----
-kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast-kubernetes/master/rbac.yaml
+kubectl apply -f https://raw.githubusercontent.com/hazelcast/hazelcast/master/kubernetes-rbac.yaml
 
 kubectl run hz-hazelcast-0 --image=hazelcast/hazelcast:$HAZELCAST_VERSION -l "role=hazelcast"
 kubectl run hz-hazelcast-1 --image=hazelcast/hazelcast:$HAZELCAST_VERSION -l "role=hazelcast"
@@ -369,7 +369,7 @@ Kubectl::
 ----
 kubectl delete service hz-hazelcast
 kubectl delete pod hz-hazelcast-0 hz-hazelcast-1 hz-hazelcast-2
-kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast-kubernetes/master/rbac.yaml
+kubectl delete -f https://raw.githubusercontent.com/hazelcast/hazelcast/master/kubernetes-rbac.yaml
 ----
 --
 ====
